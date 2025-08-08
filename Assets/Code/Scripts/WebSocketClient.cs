@@ -31,9 +31,7 @@ public class WebSocketClient : MonoBehaviour
             {
                 Debug.Log("Message: " + bytes);
             };
-        
-            InvokeRepeating(nameof(SendMessage), 0.0f, 1.0f);
-        
+            
             await webSocket.Connect();
         }
         catch (Exception e)
@@ -50,13 +48,14 @@ public class WebSocketClient : MonoBehaviour
         #endif
     }
 
-    async void SendMessage()
+    // Method for sending messages through the WebSocket
+    public async void SendMessageToServer(string message)
     {
         try
         {
             if (webSocket.State == WebSocketState.Open)
             {
-                await webSocket.SendText("Confirm");
+                await webSocket.SendText(message);
             }
         }
         catch (Exception e)
