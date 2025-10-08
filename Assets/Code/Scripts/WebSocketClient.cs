@@ -10,7 +10,7 @@ public class WebSocketClient : MonoBehaviour
     {
         try
         {
-            webSocket = new WebSocket("wss://172.18.10.3:443");
+            webSocket = new WebSocket("ws://localhost:443");
             
             webSocket.OnOpen += () =>
             {
