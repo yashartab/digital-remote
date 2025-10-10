@@ -29,7 +29,18 @@ public class WebSocketClient : MonoBehaviour
 
             webSocket.OnMessage += (bytes) =>
             {
-                Debug.Log("Message: " + bytes);
+                string message = System.Text.Encoding.UTF8.GetString(bytes);
+                Debug.Log($"Message from server: {message}");
+                if (message.StartsWith("SceneLoaded:"))
+                {
+                    string sceneName = message.Split(':')[1];
+                    Debug.Log($"✅ Scene '{sceneName}' wurde auf dem Server erfolgreich geladen!");
+                }
+                else if (message.StartsWith("SceneNotFound:"))
+                {
+                    string sceneName = message.Split(':')[1];
+                    Debug.LogWarning($"⚠️ Scene '{sceneName}' existiert nicht auf dem Server!");
+                }
             };
             
             await webSocket.Connect();
