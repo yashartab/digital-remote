@@ -16,7 +16,7 @@ public class AppControl : MonoBehaviour
         Application.runInBackground = true;
         DontDestroyOnLoad(gameObject);
     }
-    public void QuitApp()
+    public void Quit()
     {
         Application.Quit();
     }
