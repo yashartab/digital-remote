@@ -2,10 +2,26 @@ using System;
 using UnityEngine;
 
 using NativeWebSocket;
+using UnityEngine.SceneManagement;
 
 public class WebSocketClient : MonoBehaviour
 {
     private WebSocket webSocket;
+    private static WebSocketClient instance;
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+        
+        DontDestroyOnLoad(gameObject);
+    }
+
     async void Start()
     {
         try
@@ -29,7 +45,19 @@ public class WebSocketClient : MonoBehaviour
 
             webSocket.OnMessage += (bytes) =>
             {
-                Debug.Log("Message: " + bytes);
+                string message = System.Text.Encoding.UTF8.GetString(bytes);
+                Debug.Log($"Message from server: {message}");
+                if (message.StartsWith("SceneLoaded:"))
+                {
+                    string sceneName = message.Split(':')[1];
+                    Debug.Log($"✅ Scene '{sceneName}' wurde auf dem Server erfolgreich geladen!");
+                    SceneManager.LoadScene(sceneName);
+                }
+                else if (message.StartsWith("SceneNotFound:"))
+                {
+                    string sceneName = message.Split(':')[1];
+                    Debug.LogWarning($"⚠️ Scene '{sceneName}' existiert nicht auf dem Server!");
+                }
             };
             
             await webSocket.Connect();
@@ -46,6 +74,11 @@ public class WebSocketClient : MonoBehaviour
         #if !UNITY_WEBGL || UNITY_EDITOR
             webSocket.DispatchMessageQueue();
         #endif
+    }
+
+    public static WebSocketClient GetInstance()
+    {
+        return instance;
     }
 
     // Method for sending messages through the WebSocket
