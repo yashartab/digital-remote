@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 
 using NativeWebSocket;
+using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 
 public class WebSocketClient : MonoBehaviour
@@ -57,6 +58,23 @@ public class WebSocketClient : MonoBehaviour
                 {
                     string sceneName = message.Split(':')[1];
                     Debug.LogWarning($"⚠️ Scene '{sceneName}' existiert nicht auf dem Server!");
+                }
+                else if (message.StartsWith("HeroSelected:"))
+                {
+                    Debug.Log(message);
+                    if (SceneManager.GetActiveScene().name == "RahmHeroInterview")
+                    {
+                        GameObject heroSelection = FindFirstObjectByType<HeroSelection>(FindObjectsInactive.Include).gameObject;
+                        GameObject topicSelection = FindFirstObjectByType<TopicSelection>(FindObjectsInactive.Include).gameObject;
+                        if (heroSelection != null)
+                            heroSelection.SetActive(false);
+                        if (topicSelection != null)
+                            topicSelection.SetActive(true);
+                    }
+                }
+                else if (message.StartsWith("TopicSelected:"))
+                {
+                    Debug.Log(message);
                 }
             };
             
