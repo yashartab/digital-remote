@@ -28,8 +28,6 @@ public class WebSocketClient : MonoBehaviour
         
         // Make this object persistent
         DontDestroyOnLoad(gameObject);
-        // Also updates the scenes while the app is in the background
-        Application.runInBackground = true;
         
         SceneManager.sceneLoaded += OnSceneLoaded;
     }

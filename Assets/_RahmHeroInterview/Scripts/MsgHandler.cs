@@ -6,14 +6,16 @@ namespace RahmHeroInterview
     {
         private WebSocketClient webSocketClient;
         
-         void Start()
-         {
-             webSocketClient = FindFirstObjectByType<WebSocketClient>();
+        void Start()
+        {
+            webSocketClient = FindFirstObjectByType<WebSocketClient>();
              
-             if  (webSocketClient == null)
-                 Debug.LogError("No WebSocket client found!");
-         }
+            if  (webSocketClient == null) 
+                Debug.LogError("No WebSocket client found!");
+        }
 
+        #region IncomingMessages
+         
         public string HandleMessage(string msg)
         {
             // TODO based on the needs of this scene
@@ -21,5 +23,11 @@ namespace RahmHeroInterview
 
             return "";
         } 
+        
+        #endregion IncomingMessages
+        
+        #region OutgoingMessages
+        
+        #endregion OutgoingMessages
     }
 }

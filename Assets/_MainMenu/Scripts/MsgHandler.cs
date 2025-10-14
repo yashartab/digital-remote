@@ -16,6 +16,8 @@ namespace MainMenu
                 Debug.LogError("No WebSocket client found!");
         }
 
+        #region IncomingMessages
+        
         public string HandleMessage(string msg)
         {
             // Parse message to json object 
@@ -34,21 +36,38 @@ namespace MainMenu
             string replyMsg = "";
             
             // Message handling
-            
-            // Scene change
-            if (type == "command" && action == "changeScene")
+            if (type == "command")
             {
-                string sceneName = parameters?["sceneName"]?.ToString();
-                bool success = SceneLoader.LoadScene(sceneName);
-
-                if (success)
-                    replyMsg = "";
-                else
-                    replyMsg = null;
+                switch (action)
+                {
+                    // Change scene
+                    case "changeScene":
+                        replyMsg = HandleSceneChange(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
             }
             
             return replyMsg;
         }
+        
+        private string HandleSceneChange(JObject parameters)
+        {
+            string sceneName = parameters?["sceneName"]?.ToString();
+            bool success = SceneLoader.LoadScene(sceneName);
+
+            if (success)
+                return "";
+            
+            return null;
+        }
+        
+        #endregion IncomingMessages
+
+        #region OutgoingMessages
 
         public void OnChangeScene(string sceneName)
         {
@@ -71,5 +90,7 @@ namespace MainMenu
             
             Application.Quit();
         }
+
+        #endregion OutgoingMessages
     }
 }

@@ -14,6 +14,8 @@ namespace ProductConfigurator
                 Debug.LogError("No WebSocket client found!");
         }
 
+        #region IncomingMessages
+        
         public string HandleMessage(string msg)
         {
             // TODO based on the needs of this scene
@@ -21,5 +23,11 @@ namespace ProductConfigurator
 
             return "";
         } 
+        
+        #endregion IncomingMessages
+        
+        #region OutgoingMessages
+        
+        #endregion OutgoingMessages
     }
 }
