@@ -5,15 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
     path: Assets/Scenes/MainMenu.unity
     guid: 202c88f230ce1024eb91b8f243c262df
-  - enabled: 0
-    path: Assets/Scenes/RahmHeroInterview_1.unity
-    guid: 931ee0a1f5cf0c34e8f0eadb99e041b9
   - enabled: 1
     path: Assets/Scenes/RahmHeroInterview.unity
     guid: 59448fbb42f7db34f80da5d634442ab3

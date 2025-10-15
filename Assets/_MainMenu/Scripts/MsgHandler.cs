@@ -36,7 +36,7 @@ namespace MainMenu
             string replyMsg = "";
             
             // Message handling
-            if (type == "command")
+            if (type == "reply")
             {
                 switch (action)
                 {
