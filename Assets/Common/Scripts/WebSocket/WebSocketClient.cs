@@ -16,6 +16,7 @@ public class WebSocketClient : MonoBehaviour
     // Queue containing all incoming messages from the server
     private readonly ConcurrentQueue<string> msgQueue = new();
 
+    
     private void Awake()
     {
         // Check if we are already running the client
@@ -98,43 +99,13 @@ public class WebSocketClient : MonoBehaviour
 
         if (!string.IsNullOrEmpty(replyMsg))
         {
-            // Send reply message to clients
+            // Send reply message to server
             SendMessageToServer(replyMsg);
         }
         else if (replyMsg == null)
         {
             Debug.LogWarning($"Unhandled message: {msg}");
         }
-        
-        
-        // if (msg.StartsWith("SceneLoaded:"))
-        // {
-        //     string sceneName = msg.Split(':')[1];
-        //     Debug.Log($"✅ Scene '{sceneName}' wurde auf dem Server erfolgreich geladen!");
-        //     SceneManager.LoadScene(sceneName);
-        // }
-        // else if (msg.StartsWith("SceneNotFound:"))
-        // {
-        //     string sceneName = msg.Split(':')[1];
-        //     Debug.LogWarning($"⚠️ Scene '{sceneName}' existiert nicht auf dem Server!");
-        // }
-        // else if (msg.StartsWith("HeroSelected:"))
-        // {
-        //     Debug.Log(msg);
-        //     if (SceneManager.GetActiveScene().name == "RahmHeroInterview")
-        //     {
-        //         GameObject heroSelection = FindFirstObjectByType<HeroSelection>(FindObjectsInactive.Include).gameObject;
-        //         GameObject topicSelection = FindFirstObjectByType<TopicSelection>(FindObjectsInactive.Include).gameObject;
-        //         if (heroSelection != null)
-        //             heroSelection.SetActive(false);
-        //         if (topicSelection != null)
-        //             topicSelection.SetActive(true);
-        //     }
-        // }
-        // else if (msg.StartsWith("TopicSelected:"))
-        // {
-        //     Debug.Log(msg);
-        // }
     }
     
     // Sends a message to the WebSocket server
@@ -187,6 +158,8 @@ public class WebSocketClient : MonoBehaviour
 
     private async void OnApplicationQuit()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        
         try
         {
             await webSocket.Close();
