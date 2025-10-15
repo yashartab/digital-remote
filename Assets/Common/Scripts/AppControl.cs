@@ -2,20 +2,21 @@ using UnityEngine;
 
 public class AppControl : MonoBehaviour
 {
-    private static AppControl instance;
     void Awake()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        instance = this;
-        
         Application.runInBackground = true;
         DontDestroyOnLoad(gameObject);
     }
+    
+    void Update()
+    {
+        // If the escape button is pressed, quit the application
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+    }
+    
     public void Quit()
     {
         Application.Quit();
