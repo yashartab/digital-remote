@@ -17,7 +17,12 @@ public class AppControl : MonoBehaviour
         }
     }
     
-    public void Quit()
+    public void OnChangeScene(string sceneName)
+    {
+        SceneLoader.LoadScene(sceneName);
+    }
+    
+    public void OnQuit()
     {
         Application.Quit();
     }
