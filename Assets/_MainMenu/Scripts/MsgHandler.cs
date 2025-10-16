@@ -35,14 +35,34 @@ namespace MainMenu
             // Default reply message
             string replyMsg = "";
             
-            // Message handling
-            if (type == "reply")
+            // Command message handling
+            if (type == "command")
             {
                 switch (action)
                 {
                     // Change scene
                     case "changeScene":
                         replyMsg = HandleSceneChange(parameters);
+                        break;
+                    // Quit application
+                    case "quitApplication":
+                        HandleApplicationQuit(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
+            }
+            
+            // Reply message handling
+            if (type == "reply")
+            {
+                switch (action)
+                {
+                    // Change scene
+                    case "changeScene":
+                        replyMsg = ReplySceneChange(parameters);
                         break;
                     // No corresponding action
                     default:
@@ -55,6 +75,29 @@ namespace MainMenu
         }
         
         private string HandleSceneChange(JObject parameters)
+        {
+            string sceneName = parameters?["sceneName"]?.ToString();
+            bool success = SceneLoader.LoadScene(sceneName);
+
+            if (success)
+            {
+                // Return reply message
+                return MessageBuilder.Build(
+                    "reply",
+                    "changeScene",
+                    new Dictionary<string, object> { { "sceneName", sceneName } }
+                );
+            }
+            
+            return null;
+        }
+        
+        private void HandleApplicationQuit(JObject parameters)
+        {
+            Application.Quit();
+        }
+        
+        private string ReplySceneChange(JObject parameters)
         {
             string sceneName = parameters?["sceneName"]?.ToString();
             bool success = SceneLoader.LoadScene(sceneName);
