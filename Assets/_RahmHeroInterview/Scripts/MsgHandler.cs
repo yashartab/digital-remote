@@ -38,22 +38,26 @@ namespace RahmHeroInterview
             // Default reply message
             string replyMsg = "";
             
-            // Message handling
+            // Reply message handling
             if (type == "reply")
             {
                 switch (action)
                 {
                     // Change scene
                     case "changeScene":
-                        replyMsg = HandleSceneChange(parameters);
+                        replyMsg = ReplySceneChange(parameters);
                         break;
                     // Select hero
                     case "selectHero":
-                        HandleHeroSelection(parameters);
+                        ReplyHeroSelection(parameters);
                         break;
                     // Select topic
                     case "selectTopic":
-                        HandleTopicSelection(parameters);
+                        ReplyTopicSelection(parameters);
+                        break;
+                    // Select subtopic
+                    case "selectSubtopic":
+                        ReplySubtopicSelection(parameters);
                         break;
                     // No corresponding action
                     default:
@@ -65,7 +69,7 @@ namespace RahmHeroInterview
             return replyMsg;
         } 
         
-        private string HandleSceneChange(JObject parameters)
+        private string ReplySceneChange(JObject parameters)
         {
             string sceneName = parameters?["sceneName"]?.ToString();
             bool success = SceneLoader.LoadScene(sceneName);
@@ -76,7 +80,7 @@ namespace RahmHeroInterview
             return null;
         }
 
-        private void HandleHeroSelection(JObject parameters)
+        private void ReplyHeroSelection(JObject parameters)
         {
             int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
             
@@ -86,9 +90,16 @@ namespace RahmHeroInterview
             topicSelection.gameObject.SetActive(true);
         }
 
-        private void HandleTopicSelection(JObject parameters)
+        private void ReplyTopicSelection(JObject parameters)
         {
             int topicID = parameters?["topicID"]?.ToObject<int>() ?? 0;
+
+            // TODO
+        }
+        
+        private void ReplySubtopicSelection(JObject parameters)
+        {
+            int subtopicID = parameters?["subtopicID"]?.ToObject<int>() ?? 0;
 
             // TODO
         }
@@ -113,6 +124,26 @@ namespace RahmHeroInterview
                 "command",
                 "selectTopic",
                 new Dictionary<string, object> { { "topicID", topicID } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnSelectSubtopic(int subtopicID)
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "selectSubtopic",
+                new Dictionary<string, object> { { "subtopicID", subtopicID } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnProductConfigurator()
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "changeScene",
+                new Dictionary<string, object> { { "sceneName", "3DProductConfigurator" } }
             );
             webSocketClient.SendMessageToServer(json);
         }
