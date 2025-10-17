@@ -35,11 +35,15 @@ namespace ProductConfigurator
             // Default reply message
             string replyMsg = "";
             
-            // Message handling
+            // Reply message handling
             if (type == "reply")
             {
                 switch (action)
                 {
+                    // Change scene
+                    case "changeScene":
+                        replyMsg = ReplySceneChange(parameters);
+                        break;
                     // Reset product
                     case "resetProduct":
                         // replyMsg = HandleProductReset();
@@ -57,6 +61,17 @@ namespace ProductConfigurator
             
             return replyMsg;
         } 
+        
+        private string ReplySceneChange(JObject parameters)
+        {
+            string sceneName = parameters?["sceneName"]?.ToString();
+            bool success = SceneLoader.LoadScene(sceneName);
+
+            if (success)
+                return "";
+            
+            return null;
+        }
         
         #endregion IncomingMessages
         
@@ -78,6 +93,16 @@ namespace ProductConfigurator
                 "command",
                 "rotateProduct",
                 new Dictionary<string, object> { { "direction", direction } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnMainMenu()
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "changeScene",
+                new Dictionary<string, object> { { "sceneName", "MainMenu" } }
             );
             webSocketClient.SendMessageToServer(json);
         }
