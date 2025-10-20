@@ -401,6 +401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c2892ea89b294d469e1736d34ef66df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  msgHandler: {fileID: 585838685}
 --- !u!1 &166787613
 GameObject:
   m_ObjectHideFlags: 0
@@ -1437,7 +1438,7 @@ GameObject:
   - component: {fileID: 585838685}
   m_Layer: 0
   m_Name: MsgHandler
-  m_TagString: Untagged
+  m_TagString: MsgHandler
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

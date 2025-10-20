@@ -11,7 +11,7 @@ namespace RahmHeroInterview
         
         private WebSocketClient webSocketClient;
         
-        void Start()
+        void Awake()
         {
             webSocketClient = FindFirstObjectByType<WebSocketClient>();
              
@@ -66,16 +66,41 @@ namespace RahmHeroInterview
                 }
             }
             
+            // Receive message handling
+            if (type == "receive")
+            {
+                switch (action)
+                {
+                    // Receive hero list
+                    case "heroData":
+                        replyMsg = ReceiveHeroList(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
+            }
+            
             return replyMsg;
         } 
         
         private string ReplySceneChange(JObject parameters)
         {
             string sceneName = parameters?["sceneName"]?.ToString();
-            bool success = SceneLoader.LoadScene(sceneName);
+            StartCoroutine(SceneLoader.LoadScene(sceneName));
+            return "";
+        }
+        
+        private string ReceiveHeroList(JObject parameters)
+        {
+            List<RahmHeroData> heroData = parameters?["heroData"]?.ToObject<List<RahmHeroData>>();
 
-            if (success)
+            if (heroData != null && heroData.Count > 0)
+            {
+                heroSelection.InitHeroSelection(heroData);
                 return "";
+            }
             
             return null;
         }
@@ -107,6 +132,16 @@ namespace RahmHeroInterview
         #endregion IncomingMessages
         
         #region OutgoingMessages
+
+        public void OnSceneLoaded(string sceneName)
+        {
+            string json = MessageBuilder.Build(
+                "get",
+                "heroList",
+                new Dictionary<string, object> { }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
 
         public void OnSelectHero(int heroID)
         {

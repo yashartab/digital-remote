@@ -8,7 +8,7 @@ namespace MainMenu
     {
         private WebSocketClient webSocketClient;
         
-        void Start()
+        void Awake()
         {
             webSocketClient = FindFirstObjectByType<WebSocketClient>();
              
@@ -77,19 +77,8 @@ namespace MainMenu
         private string HandleSceneChange(JObject parameters)
         {
             string sceneName = parameters?["sceneName"]?.ToString();
-            bool success = SceneLoader.LoadScene(sceneName);
-
-            if (success)
-            {
-                // Return reply message
-                return MessageBuilder.Build(
-                    "reply",
-                    "changeScene",
-                    new Dictionary<string, object> { { "sceneName", sceneName } }
-                );
-            }
-            
-            return null;
+            StartCoroutine(SceneLoader.LoadScene(sceneName));
+            return "";
         }
         
         private void HandleApplicationQuit(JObject parameters)
@@ -100,18 +89,24 @@ namespace MainMenu
         private string ReplySceneChange(JObject parameters)
         {
             string sceneName = parameters?["sceneName"]?.ToString();
-            bool success = SceneLoader.LoadScene(sceneName);
-
-            if (success)
-                return "";
-            
-            return null;
+            StartCoroutine(SceneLoader.LoadScene(sceneName));
+            return "";
         }
         
         #endregion IncomingMessages
 
         #region OutgoingMessages
 
+        public void OnSceneLoaded(string sceneName)
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "changeScene",
+                new Dictionary<string, object> { { "sceneName", sceneName } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
         public void OnChangeScene(string sceneName)
         {
             string json = MessageBuilder.Build(
