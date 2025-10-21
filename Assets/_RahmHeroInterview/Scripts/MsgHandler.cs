@@ -39,6 +39,22 @@ namespace RahmHeroInterview
             // Default reply message
             string replyMsg = "";
             
+            // Command message handling
+            if (type == "command")
+            {
+                switch (action)
+                {
+                    // Show hero card
+                    case "showHeroCard":
+                        HandleShowHeroCard(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
+            }
+            
             // Reply message handling
             if (type == "reply")
             {
@@ -89,6 +105,14 @@ namespace RahmHeroInterview
             
             return replyMsg;
         } 
+        
+        private void HandleShowHeroCard(JObject parameters)
+        {
+            int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
+
+            // Show hero card of selected hero
+            heroSelection.ShowHeroCard(heroID);
+        }
         
         private string ReplySceneChange(JObject parameters)
         {

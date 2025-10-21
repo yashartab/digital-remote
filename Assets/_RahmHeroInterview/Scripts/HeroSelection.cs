@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -51,7 +52,23 @@ namespace RahmHeroInterview
                 // Add onClick event to the button which selects the hero
                 heroCard.GetComponent<Button>().onClick.AddListener(() => { this.OnSelectHero(hero); });
 
+                // Show hero card of the first hero
+                ShowHeroCard(1);
             }
+        }
+
+        public void ShowHeroCard(int heroID)
+        {
+            // TODO: Animated synchrony to rahm hero videos on mirror
+            
+            // Hide all hero cards
+            foreach (HeroCard heroCard in heroCards)
+            {
+                heroCard.gameObject.SetActive(false);
+            }
+            
+            // Show hero card of selected hero
+            heroCards[heroID - 1].gameObject.SetActive(true);
         }
         
         public void OnSelectHero(RahmHeroData hero)

@@ -35,11 +35,13 @@ namespace RahmHeroInterview
 
         public VideoClip FaceIconClip;
         public VideoClip IdleClip;
+        public VideoClip MovingClip;
+        public VideoClip IntroClip;
         public Topic[] Topics;
 
 
-        public RahmHero(int id, string name, string keyword, string description, VideoClip faceIconClip,
-            VideoClip idleClip, Topic[] topics)
+        public RahmHero(int id, string name, string keyword, string description, VideoClip faceIconClip, 
+            VideoClip idleClip, VideoClip movingClip, VideoClip introClip, Topic[] topics)
         {
             this.Id = id;
             this.Name = name;
@@ -47,6 +49,8 @@ namespace RahmHeroInterview
             this.Description = description;
             this.FaceIconClip = faceIconClip;
             this.IdleClip = idleClip;
+            this.MovingClip = movingClip;
+            this.IntroClip = introClip;
             this.Topics = topics;
         }
     }

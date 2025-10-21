@@ -32,12 +32,13 @@ namespace RahmHeroInterview
             heroSelection.gameObject.SetActive(true);
             topicSelection.gameObject.SetActive(false);
             // TODO: Subtopic selection
+            
+            // TODO: Start heroCard rotation
         }
         
         private void ShowTopicSelection(RahmHeroData heroData)
         {
-            // TODO: Topic selection based on selected hero
-            
+            // Generate topic buttons based on selected hero
             topicSelection.SetupTopicButtons(heroData);
             
             heroSelection.gameObject.SetActive(false);
