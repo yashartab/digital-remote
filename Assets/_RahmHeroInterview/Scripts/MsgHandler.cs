@@ -175,6 +175,16 @@ namespace RahmHeroInterview
             );
             webSocketClient.SendMessageToServer(json);
         }
+        
+        public void OnShowHero(int heroID)
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "showHero",
+                new Dictionary<string, object> { { "heroID", heroID } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
 
         public void OnSelectHero(int heroID)
         {

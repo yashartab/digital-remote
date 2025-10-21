@@ -21,6 +21,9 @@ namespace RahmHeroInterview
         // List of all hero cards
         private List<HeroCard> heroCards = new List<HeroCard>();
         
+        // The id of current highlighted hero
+        private int highlightedHeroID = 1;
+        
         
         void Update()
         {
@@ -59,6 +62,8 @@ namespace RahmHeroInterview
 
         public void ShowHeroCard(int heroID)
         {
+            highlightedHeroID = heroID;
+            
             // TODO: Animated synchrony to rahm hero videos on mirror
             
             // Hide all hero cards
@@ -77,6 +82,26 @@ namespace RahmHeroInterview
             // TODO: On reply change UI to topic selection
             
             msgHandler.OnSelectHero(hero.Id);
+        }
+
+        public void OnPreviousHero()
+        {
+            if (highlightedHeroID > 1)
+                highlightedHeroID--;
+            else
+                highlightedHeroID = rahmHeroData.Count;
+            
+            msgHandler.OnShowHero(highlightedHeroID);
+        }
+        
+        public void OnNextHero()
+        {
+            if (highlightedHeroID < rahmHeroData.Count)
+                highlightedHeroID++;
+            else
+                highlightedHeroID = 1;
+            
+            msgHandler.OnShowHero(highlightedHeroID);
         }
 
         public List<RahmHeroData> GetHeroData()
