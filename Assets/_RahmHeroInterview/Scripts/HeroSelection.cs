@@ -16,7 +16,7 @@ namespace RahmHeroInterview
         [SerializeField] private GameObject heroCardPrefab;
         
         // List of all rahm heroes
-        [SerializeField] private List<RahmHeroData> rahmHeroData = new List<RahmHeroData>();
+        private List<RahmHeroData> rahmHeroData = new List<RahmHeroData>();
         
         // List of all hero cards
         private List<HeroCard> heroCards = new List<HeroCard>();
