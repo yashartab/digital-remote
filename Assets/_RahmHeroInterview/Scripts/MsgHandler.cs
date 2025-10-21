@@ -6,6 +6,7 @@ namespace RahmHeroInterview
 {
     public class MsgHandler : MonoBehaviour, IMsgHandler 
     {
+        [SerializeField] InterviewController interviewController;
         [SerializeField] HeroSelection heroSelection;
         [SerializeField] TopicSelection topicSelection;
         
@@ -109,10 +110,8 @@ namespace RahmHeroInterview
         {
             int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
             
-            // TODO
-            
-            heroSelection.gameObject.SetActive(false);
-            topicSelection.gameObject.SetActive(true);
+            // Switch to topic selection UI for selected hero
+            interviewController.SelectHero(heroSelection.GetHeroDataByID(heroID));
         }
 
         private void ReplyTopicSelection(JObject parameters)
