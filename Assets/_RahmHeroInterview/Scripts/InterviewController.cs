@@ -12,6 +12,13 @@ namespace RahmHeroInterview
         // The current selected topic data
         private TopicData selectedTopicData;
 
+        
+        void Start()
+        {
+            // Start with hero selection
+            ShowHeroSelection();
+        }
+        
         public void SelectHero(RahmHeroData heroData)
         {
             this.selectedHeroData = heroData;
@@ -19,12 +26,22 @@ namespace RahmHeroInterview
             ShowTopicSelection(heroData);
         }
         
+        public void ShowHeroSelection()
+        {
+            // Show hero selection
+            heroSelection.gameObject.SetActive(true);
+            topicSelection.gameObject.SetActive(false);
+            // TODO: Subtopic selection
+        }
+        
         private void ShowTopicSelection(RahmHeroData heroData)
         {
+            // TODO: Topic selection based on selected hero
+            
+            topicSelection.SetupTopicButtons(heroData);
+            
             heroSelection.gameObject.SetActive(false);
             topicSelection.gameObject.SetActive(true);
-            
-            // TODO: Topic selection based on selected hero
         }
     }
 }

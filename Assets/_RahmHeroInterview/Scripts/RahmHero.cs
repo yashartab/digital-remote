@@ -59,6 +59,6 @@ namespace RahmHeroInterview
         public string Keyword;
         public string Description;
         
-        public Topic[] Topics;
+        public TopicData[] TopicData;
     }
 }

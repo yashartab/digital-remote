@@ -60,6 +60,10 @@ namespace RahmHeroInterview
                     case "selectSubtopic":
                         ReplySubtopicSelection(parameters);
                         break;
+                    // Back to hero selection
+                    case "backToHeroSelection":
+                        ReplyBackToHeroSelection(parameters);
+                        break;
                     // No corresponding action
                     default:
                         replyMsg = null;
@@ -92,6 +96,34 @@ namespace RahmHeroInterview
             StartCoroutine(SceneLoader.LoadScene(sceneName));
             return "";
         }
+
+        private void ReplyHeroSelection(JObject parameters)
+        {
+            int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
+            
+            // Switch to topic selection UI for selected hero
+            interviewController.SelectHero(heroSelection.GetHeroDataByID(heroID));
+        }
+
+        private void ReplyTopicSelection(JObject parameters)
+        {
+            int topicID = parameters?["topicID"]?.ToObject<int>() ?? 1;
+
+            // TODO?
+        }
+        
+        private void ReplySubtopicSelection(JObject parameters)
+        {
+            int subtopicID = parameters?["subtopicID"]?.ToObject<int>() ?? 0;
+
+            // TODO
+        }
+        
+        private void ReplyBackToHeroSelection(JObject parameters)
+        {
+            // Show the hero selection 
+            interviewController.ShowHeroSelection();
+        }
         
         private string ReceiveHeroList(JObject parameters)
         {
@@ -104,28 +136,6 @@ namespace RahmHeroInterview
             }
             
             return null;
-        }
-
-        private void ReplyHeroSelection(JObject parameters)
-        {
-            int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
-            
-            // Switch to topic selection UI for selected hero
-            interviewController.SelectHero(heroSelection.GetHeroDataByID(heroID));
-        }
-
-        private void ReplyTopicSelection(JObject parameters)
-        {
-            int topicID = parameters?["topicID"]?.ToObject<int>() ?? 0;
-
-            // TODO
-        }
-        
-        private void ReplySubtopicSelection(JObject parameters)
-        {
-            int subtopicID = parameters?["subtopicID"]?.ToObject<int>() ?? 0;
-
-            // TODO
         }
 
         #endregion IncomingMessages
@@ -182,7 +192,17 @@ namespace RahmHeroInterview
             webSocketClient.SendMessageToServer(json);
         }
         
-        public void OnMainMenu()
+        public void OnBackToHeroSelection()
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "backToHeroSelection",
+                new Dictionary<string, object> { }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnBackToMainMenu()
         {
             string json = MessageBuilder.Build(
                 "command",
