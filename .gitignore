@@ -103,6 +103,8 @@ InitTestScene*.unity*
 
 # Videos
 *.mp4
+*.mp4.meta
 
 # 3D Modelle
-.obj
+*.obj
+*.obj.meta
