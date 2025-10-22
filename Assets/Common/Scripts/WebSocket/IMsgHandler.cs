@@ -3,4 +3,6 @@
 public interface IMsgHandler
 {
     string HandleMessage(string msg);
+    
+    void OnSceneLoaded(string sceneName);
 }

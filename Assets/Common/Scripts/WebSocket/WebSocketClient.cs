@@ -111,6 +111,9 @@ public class WebSocketClient : MonoBehaviour
     // Sends a message to the WebSocket server
     public async void SendMessageToServer(string msg)
     {
+        if (webSocket == null)
+            return;
+        
         try
         {
             if (webSocket.State == WebSocketState.Open)
@@ -128,6 +131,8 @@ public class WebSocketClient : MonoBehaviour
     {
         // Find and set the scene handler of the current active scene
         currentMsgHandler = FindMsgHandler(scene);
+        // Handle scene loaded message
+        currentMsgHandler.OnSceneLoaded(scene.name);
     }
     
     // Returns the message handler of the current scene

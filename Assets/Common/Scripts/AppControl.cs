@@ -19,7 +19,7 @@ public class AppControl : MonoBehaviour
     
     public void OnChangeScene(string sceneName)
     {
-        SceneLoader.LoadScene(sceneName);
+        StartCoroutine(SceneLoader.LoadScene(sceneName));
     }
     
     public void OnQuit()

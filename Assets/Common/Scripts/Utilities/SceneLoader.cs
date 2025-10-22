@@ -1,24 +1,34 @@
+using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public static class SceneLoader
 {
-    public static bool LoadScene(string sceneName)
+    public static IEnumerator LoadScene(string sceneName)
     {
+        // If we are already in the scene, do nothing
+        if (sceneName == SceneManager.GetActiveScene().name)
+            yield break;
+        
         // Validate if the parameter is a valid scene name
         if (IsSceneAvailable(sceneName))
         {
-            SceneManager.LoadScene(sceneName);
-            return true;
+            // Load scene async
+            AsyncOperation asyncLoadLevel = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+            while (!asyncLoadLevel.isDone)
+            {
+                Debug.Log("Loading Scene ...");
+                yield return null;
+            }
         }
         else
         {
             Debug.LogWarning("Scene '" + sceneName + "' not found in build settings!");
-            return false;
+            yield return null;
         }
     }
-        
+    
     // Checks if the scene is available in the build settings
     private static bool IsSceneAvailable(string sceneName)
     {

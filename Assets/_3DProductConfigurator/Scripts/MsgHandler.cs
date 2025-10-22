@@ -8,7 +8,7 @@ namespace ProductConfigurator
     {
         private WebSocketClient webSocketClient;
         
-        void Start()
+        void Awake()
         {
             webSocketClient = FindFirstObjectByType<WebSocketClient>();
              
@@ -65,18 +65,26 @@ namespace ProductConfigurator
         private string ReplySceneChange(JObject parameters)
         {
             string sceneName = parameters?["sceneName"]?.ToString();
-            bool success = SceneLoader.LoadScene(sceneName);
-
-            if (success)
-                return "";
-            
-            return null;
+            StartCoroutine(SceneLoader.LoadScene(sceneName));
+            return "";
         }
         
         #endregion IncomingMessages
         
         #region OutgoingMessages
 
+        public void OnSceneLoaded(string sceneName)
+        {
+            // TODO
+            
+            string json = MessageBuilder.Build(
+                "command",
+                "changeScene",
+                new Dictionary<string, object> { { "sceneName", sceneName } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
         public void OnResetProduct()
         {
             string json = MessageBuilder.Build(
