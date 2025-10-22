@@ -101,6 +101,10 @@ InitTestScene*.unity*
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
-# HTTPS certificate for the WebSocket server
-/Assets/Code/Certs
-/Assets/Code/Certs.meta
+# Videos
+*.mp4
+*.mp4.meta
+
+# 3D Modelle
+*.obj
+*.obj.meta

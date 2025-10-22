@@ -1,0 +1,251 @@
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using UnityEngine;
+
+namespace RahmHeroInterview
+{
+    public class MsgHandler : MonoBehaviour, IMsgHandler 
+    {
+        [SerializeField] InterviewController interviewController;
+        [SerializeField] HeroSelection heroSelection;
+        [SerializeField] TopicSelection topicSelection;
+        
+        private WebSocketClient webSocketClient;
+        
+        void Awake()
+        {
+            webSocketClient = FindFirstObjectByType<WebSocketClient>();
+             
+            if  (webSocketClient == null) 
+                Debug.LogError("No WebSocket client found!");
+        }
+
+        #region IncomingMessages
+         
+        public string HandleMessage(string msg)
+        {
+            // Parse message to json object 
+            JObject json = JObject.Parse(msg);
+
+            // Get message type, action and parameters
+            string type = json["type"]?.ToString();
+            string action = json["action"]?.ToString();
+            var parameters = json["parameters"] as JObject;
+        
+            Debug.Log($"Received type: {type}");
+            Debug.Log($"Received action: {action}");
+            Debug.Log($"Received parameters: {parameters}");
+            
+            // Default reply message
+            string replyMsg = "";
+            
+            // Command message handling
+            if (type == "command")
+            {
+                switch (action)
+                {
+                    // Show hero card
+                    case "showHeroCard":
+                        HandleShowHeroCard(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
+            }
+            
+            // Reply message handling
+            if (type == "reply")
+            {
+                switch (action)
+                {
+                    // Change scene
+                    case "changeScene":
+                        replyMsg = ReplySceneChange(parameters);
+                        break;
+                    // Select hero
+                    case "selectHero":
+                        ReplyHeroSelection(parameters);
+                        break;
+                    // Select topic
+                    case "selectTopic":
+                        ReplyTopicSelection(parameters);
+                        break;
+                    // Select subtopic
+                    case "selectSubtopic":
+                        ReplySubtopicSelection(parameters);
+                        break;
+                    // Back to hero selection
+                    case "backToHeroSelection":
+                        ReplyBackToHeroSelection(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
+            }
+            
+            // Receive message handling
+            if (type == "receive")
+            {
+                switch (action)
+                {
+                    // Receive hero list
+                    case "heroData":
+                        replyMsg = ReceiveHeroList(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
+            }
+            
+            return replyMsg;
+        } 
+        
+        private void HandleShowHeroCard(JObject parameters)
+        {
+            int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
+
+            // Show hero card of selected hero
+            heroSelection.ShowHeroCard(heroID);
+        }
+        
+        private string ReplySceneChange(JObject parameters)
+        {
+            string sceneName = parameters?["sceneName"]?.ToString();
+            StartCoroutine(SceneLoader.LoadScene(sceneName));
+            return "";
+        }
+
+        private void ReplyHeroSelection(JObject parameters)
+        {
+            int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
+            
+            // Switch to topic selection UI for selected hero
+            interviewController.SelectHero(heroSelection.GetHeroDataByID(heroID));
+        }
+
+        private void ReplyTopicSelection(JObject parameters)
+        {
+            int topicID = parameters?["topicID"]?.ToObject<int>() ?? 1;
+
+            // TODO?
+        }
+        
+        private void ReplySubtopicSelection(JObject parameters)
+        {
+            int subtopicID = parameters?["subtopicID"]?.ToObject<int>() ?? 0;
+
+            // TODO
+        }
+        
+        private void ReplyBackToHeroSelection(JObject parameters)
+        {
+            // Show the hero selection 
+            interviewController.ShowHeroSelection();
+        }
+        
+        private string ReceiveHeroList(JObject parameters)
+        {
+            List<RahmHeroData> heroData = parameters?["heroData"]?.ToObject<List<RahmHeroData>>();
+
+            if (heroData != null && heroData.Count > 0)
+            {
+                heroSelection.InitHeroSelection(heroData);
+                return "";
+            }
+            
+            return null;
+        }
+
+        #endregion IncomingMessages
+        
+        #region OutgoingMessages
+
+        public void OnSceneLoaded(string sceneName)
+        {
+            string json = MessageBuilder.Build(
+                "get",
+                "heroList",
+                new Dictionary<string, object> { }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnShowHero(int heroID)
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "showHero",
+                new Dictionary<string, object> { { "heroID", heroID } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+
+        public void OnSelectHero(int heroID)
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "selectHero",
+                new Dictionary<string, object> { { "heroID", heroID } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+
+        public void OnSelectTopic(int topicID)
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "selectTopic",
+                new Dictionary<string, object> { { "topicID", topicID } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnSelectSubtopic(int subtopicID)
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "selectSubtopic",
+                new Dictionary<string, object> { { "subtopicID", subtopicID } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnProductConfigurator()
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "changeScene",
+                new Dictionary<string, object> { { "sceneName", "3DProductConfigurator" } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnBackToHeroSelection()
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "backToHeroSelection",
+                new Dictionary<string, object> { }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnBackToMainMenu()
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "changeScene",
+                new Dictionary<string, object> { { "sceneName", "MainMenu" } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        #endregion OutgoingMessages
+    }
+}
