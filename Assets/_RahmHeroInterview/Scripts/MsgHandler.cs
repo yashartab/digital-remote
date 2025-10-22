@@ -6,12 +6,13 @@ namespace RahmHeroInterview
 {
     public class MsgHandler : MonoBehaviour, IMsgHandler 
     {
+        [SerializeField] InterviewController interviewController;
         [SerializeField] HeroSelection heroSelection;
         [SerializeField] TopicSelection topicSelection;
         
         private WebSocketClient webSocketClient;
         
-        void Start()
+        void Awake()
         {
             webSocketClient = FindFirstObjectByType<WebSocketClient>();
              
@@ -38,6 +39,22 @@ namespace RahmHeroInterview
             // Default reply message
             string replyMsg = "";
             
+            // Command message handling
+            if (type == "command")
+            {
+                switch (action)
+                {
+                    // Show hero card
+                    case "showHeroCard":
+                        HandleShowHeroCard(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
+            }
+            
             // Reply message handling
             if (type == "reply")
             {
@@ -59,6 +76,26 @@ namespace RahmHeroInterview
                     case "selectSubtopic":
                         ReplySubtopicSelection(parameters);
                         break;
+                    // Back to hero selection
+                    case "backToHeroSelection":
+                        ReplyBackToHeroSelection(parameters);
+                        break;
+                    // No corresponding action
+                    default:
+                        replyMsg = null;
+                        break;
+                }
+            }
+            
+            // Receive message handling
+            if (type == "receive")
+            {
+                switch (action)
+                {
+                    // Receive hero list
+                    case "heroData":
+                        replyMsg = ReceiveHeroList(parameters);
+                        break;
                     // No corresponding action
                     default:
                         replyMsg = null;
@@ -69,32 +106,34 @@ namespace RahmHeroInterview
             return replyMsg;
         } 
         
+        private void HandleShowHeroCard(JObject parameters)
+        {
+            int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
+
+            // Show hero card of selected hero
+            heroSelection.ShowHeroCard(heroID);
+        }
+        
         private string ReplySceneChange(JObject parameters)
         {
             string sceneName = parameters?["sceneName"]?.ToString();
-            bool success = SceneLoader.LoadScene(sceneName);
-
-            if (success)
-                return "";
-            
-            return null;
+            StartCoroutine(SceneLoader.LoadScene(sceneName));
+            return "";
         }
 
         private void ReplyHeroSelection(JObject parameters)
         {
             int heroID = parameters?["heroID"]?.ToObject<int>() ?? 1;
             
-            // TODO
-            
-            heroSelection.gameObject.SetActive(false);
-            topicSelection.gameObject.SetActive(true);
+            // Switch to topic selection UI for selected hero
+            interviewController.SelectHero(heroSelection.GetHeroDataByID(heroID));
         }
 
         private void ReplyTopicSelection(JObject parameters)
         {
-            int topicID = parameters?["topicID"]?.ToObject<int>() ?? 0;
+            int topicID = parameters?["topicID"]?.ToObject<int>() ?? 1;
 
-            // TODO
+            // TODO?
         }
         
         private void ReplySubtopicSelection(JObject parameters)
@@ -103,10 +142,49 @@ namespace RahmHeroInterview
 
             // TODO
         }
+        
+        private void ReplyBackToHeroSelection(JObject parameters)
+        {
+            // Show the hero selection 
+            interviewController.ShowHeroSelection();
+        }
+        
+        private string ReceiveHeroList(JObject parameters)
+        {
+            List<RahmHeroData> heroData = parameters?["heroData"]?.ToObject<List<RahmHeroData>>();
+
+            if (heroData != null && heroData.Count > 0)
+            {
+                heroSelection.InitHeroSelection(heroData);
+                return "";
+            }
+            
+            return null;
+        }
 
         #endregion IncomingMessages
         
         #region OutgoingMessages
+
+        public void OnSceneLoaded(string sceneName)
+        {
+            string json = MessageBuilder.Build(
+                "get",
+                "heroList",
+                new Dictionary<string, object> { }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnShowHero(int heroID)
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "showHero",
+                new Dictionary<string, object> { { "heroID", heroID } }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
 
         public void OnSelectHero(int heroID)
         {
@@ -148,7 +226,17 @@ namespace RahmHeroInterview
             webSocketClient.SendMessageToServer(json);
         }
         
-        public void OnMainMenu()
+        public void OnBackToHeroSelection()
+        {
+            string json = MessageBuilder.Build(
+                "command",
+                "backToHeroSelection",
+                new Dictionary<string, object> { }
+            );
+            webSocketClient.SendMessageToServer(json);
+        }
+        
+        public void OnBackToMainMenu()
         {
             string json = MessageBuilder.Build(
                 "command",

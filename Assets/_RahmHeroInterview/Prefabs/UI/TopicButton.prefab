@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Thema
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 1bf6918a59a27f44c8ae9e3828d98e8d, type: 2}
   m_sharedMaterial: {fileID: -7526814695487677811, guid: 1bf6918a59a27f44c8ae9e3828d98e8d, type: 2}
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 8278067313408209808}
   - component: {fileID: 4657015132818725870}
   m_Layer: 5
-  m_Name: MenuButton
+  m_Name: TopicButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -173,7 +173,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 400, y: 100}
+  m_SizeDelta: {x: 600, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8520701044809834210
 CanvasRenderer:
